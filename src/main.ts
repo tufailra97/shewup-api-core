@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -10,6 +10,11 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   const port = configService.get<number>('PORT');
+
+  app.enableVersioning({
+    defaultVersion: '1',
+    type: VersioningType.URI
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Shewup APIs')
