@@ -9,3 +9,69 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Roles {
+  ADMIN
+  USER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  order     Orders[]
+
+  @@index([lastName, firstName], map: "users_last_name_first_name_idx")
+  @@map("users")
+}
+
+model Orders {
+  id           String         @id @default(uuid())
+  userId       String         @map("user_id")
+  user         User           @relation(fields: [userId], references: [id])
+  createdAt    DateTime       @default(now()) @map("created_at")
+  udpatedAt    DateTime       @updatedAt @map("updated_at")
+  orderDetails OrderDetails[]
+
+  @@map("orders")
+}
+
+model OrderDetails {
+  id        String   @id @default(uuid())
+  orderId   String   @map("order_id")
+  order     Orders   @relation(fields: [orderId], references: [id])
+  productId String   @map("product_id")
+  product   Products @relation(fields: [productId], references: [id])
+  quantity  Int      @map("quantity")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("order_details")
+}
+
+model Categories {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  products    Products[]
+
+  @@map("categories")
+}
+
+model Products {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String
+  price       Float
+  categoryId  String     @map("category_id")
+  category    Categories @relation(fields: [categoryId], references: [id])
+
+  orderDetails OrderDetails[]
+  @@map("products")
+}
