@@ -15,7 +15,7 @@ enum Roles {
   USER
 }
 
-model User {
+model Users {
   id        String   @id @default(uuid())
   firstName String   @map("first_name")
   lastName  String   @map("last_name")
@@ -33,7 +33,7 @@ model User {
 model Orders {
   id           String         @id @default(uuid())
   userId       String         @map("user_id")
-  user         User           @relation(fields: [userId], references: [id])
+  user         Users          @relation(fields: [userId], references: [id])
   createdAt    DateTime       @default(now()) @map("created_at")
   udpatedAt    DateTime       @updatedAt @map("updated_at")
   orderDetails OrderDetails[]
@@ -127,7 +127,7 @@ model ProductReviews {
   productId String   @map("product_id")
   product   Products @relation(fields: [productId], references: [id])
   userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id])
+  user      Users    @relation(fields: [userId], references: [id])
   review    String
   rating    Int
   createdAt DateTime @default(now()) @map("created_at")
