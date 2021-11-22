@@ -1,31 +1,96 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException
+} from '@nestjs/common';
 
+import { errorMessages } from 'src/shared/constants';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(private prismaService: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.prismaService.users.findFirst({
+      where: { email: createUserDto.email }
+    });
+
+    if (user) {
+      throw new ConflictException(errorMessages.EMAIL_ALREADY_IN_USE);
+    }
+
+    try {
+      const newUser = await this.prismaService.users.create({
+        data: createUserDto
+      });
+
+      return new UserEntity(newUser);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        errorMessages.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
-  findAll() {
-    return this.prismaService.users.findMany();
+  async findAll() {
+    try {
+      const users = await this.prismaService.users.findMany();
+      return users.map((user) => new UserEntity(user));
+    } catch (error) {
+      throw new InternalServerErrorException(
+        errorMessages.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOneById(id: string) {
+    const user = await this.prismaService.users.findFirst({
+      where: { id }
+    });
+
+    if (!user) {
+      throw new BadRequestException(errorMessages.USER_NOT_FOUND);
+    }
+
+    return new UserEntity(user);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateOneById(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.prismaService.users.update({
+        where: {
+          id
+        },
+        data: {
+          ...updateUserDto
+        }
+      });
+
+      return new UserEntity(user);
+    } catch (error) {
+      return new BadRequestException(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async deleteOneById(id: string) {
+    try {
+      await this.prismaService.users.delete({
+        where: {
+          id
+        }
+      });
+
+      return { message: 'User deleted' };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        errorMessages.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }
