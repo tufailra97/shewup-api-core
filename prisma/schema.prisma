@@ -10,23 +10,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Roles {
+enum UserRoles {
   ADMIN
-  USER
+  MANAGER
+  STAFF
+  SUPER_ADMIN
+
+  @@map("user_roles")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+
+  @@map("gender")
 }
 
 model Users {
-  id        String   @id @default(uuid())
-  firstName String   @map("first_name")
-  lastName  String   @map("last_name")
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  order     Orders[]
+  id            String    @id @default(uuid())
+  firstName     String    @map("first_name")
+  lastName      String    @map("last_name")
+  email         String    @unique
+  password      String
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  orders        Orders[]
+  gender        Gender
+  userRole      UserRoles @map("user_role")
+  contactNumber String    @map("contact_number")
 
-  ProductReviews ProductReviews[]
+  productReviews ProductReviews[]
   @@index([lastName, firstName], map: "users_last_name_first_name_idx")
+  @@index([gender], map: "users_gender")
   @@map("users")
 }
 
