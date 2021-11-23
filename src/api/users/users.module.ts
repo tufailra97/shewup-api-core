@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
+import { BcryptModule } from 'src/shared/services/bcrypt/bcrypt.module';
 
-import { AppConfigService } from 'src/shared/services/app.config.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaModule } from 'src/shared/services/prisma/prisma.module';
 
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
+  imports: [PrismaModule, BcryptModule],
   controllers: [UsersController],
-  providers: [UsersService, AppConfigService, PrismaService]
+  providers: [UsersService],
+  exports: [UsersService]
 })
 export class UsersModule {}

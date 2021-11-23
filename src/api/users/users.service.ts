@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 
 import { errorMessages } from 'src/shared/constants';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
+import { PrismaService } from 'src/shared/services/prisma/prisma.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -14,7 +15,10 @@ import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private bcryptService: BcryptService
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.prismaService.users.findFirst({
@@ -26,8 +30,11 @@ export class UsersService {
     }
 
     try {
+      const hashedPassword = await this.bcryptService.hashPassword(
+        createUserDto.password
+      );
       const newUser = await this.prismaService.users.create({
-        data: createUserDto
+        data: { ...createUserDto, password: hashedPassword }
       });
 
       return new UserEntity(newUser);
@@ -52,6 +59,18 @@ export class UsersService {
   async findOneById(id: string) {
     const user = await this.prismaService.users.findFirst({
       where: { id }
+    });
+
+    if (!user) {
+      throw new BadRequestException(errorMessages.USER_NOT_FOUND);
+    }
+
+    return new UserEntity(user);
+  }
+
+  async findOneByEmail(email: string) {
+    const user = await this.prismaService.users.findFirst({
+      where: { email }
     });
 
     if (!user) {

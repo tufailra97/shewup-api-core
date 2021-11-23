@@ -1,17 +1,19 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { AuthModule } from './api/auth/auth.module';
 import { UsersModule } from './api/users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppLoggerMiddleware } from './shared/middlewares/app.logger.middlware';
-import { AppConfigService } from './shared/services/app.config.service';
+import { AppConfigService } from './shared/services/app-configs/app.config.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }),
+    AuthModule,
     UsersModule
   ],
   controllers: [AppController],

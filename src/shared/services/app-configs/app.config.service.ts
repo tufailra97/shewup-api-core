@@ -10,7 +10,7 @@ export type TAppConfig = {
 
 @Injectable()
 export class AppConfigService {
-  constructor(private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   get configs(): TAppConfig {
     return {

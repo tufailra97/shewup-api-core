@@ -28,17 +28,17 @@ enum Gender {
 }
 
 model Users {
-  id            String    @id @default(uuid())
-  firstName     String    @map("first_name")
-  lastName      String    @map("last_name")
-  email         String    @unique
+  id            String      @id @default(uuid())
+  firstName     String      @map("first_name")
+  lastName      String      @map("last_name")
+  email         String      @unique
   password      String
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
   orders        Orders[]
   gender        Gender
-  userRole      UserRoles @map("user_role")
-  contactNumber String    @map("contact_number")
+  userRoles     UserRoles[] @map("user_roles")
+  contactNumber String      @map("contact_number")
 
   productReviews ProductReviews[]
   @@index([lastName, firstName], map: "users_last_name_first_name_idx")

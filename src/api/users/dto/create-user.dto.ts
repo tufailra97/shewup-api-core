@@ -1,13 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { Gender, UserRoles, Users } from '@prisma/client';
 import {
   IsEmail,
+  IsEnum,
   IsString,
   Matches,
   MaxLength,
   MinLength
 } from 'class-validator';
+
+import { ApiProperty } from '@nestjs/swagger';
+import { Gender, UserRoles, Users } from '@prisma/client';
 
 export class CreateUserDto implements Users {
   @Exclude()
@@ -35,10 +37,12 @@ export class CreateUserDto implements Users {
   @Exclude()
   updatedAt: Date;
 
-  @ApiProperty({ enum: UserRoles })
-  userRole: UserRoles;
+  @ApiProperty({ enum: UserRoles, isArray: true })
+  @IsEnum(UserRoles, { each: true })
+  userRoles: UserRoles[];
 
   @ApiProperty({ enum: Gender })
+  @IsEnum(Gender)
   gender: Gender;
 
   @ApiProperty()

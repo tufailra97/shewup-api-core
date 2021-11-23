@@ -1,9 +1,4 @@
-import {
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-  ApiOkResponse,
-  ApiTags
-} from '@nestjs/swagger';
+import { ErrorEntity } from 'src/shared/entities';
 
 import {
   Body,
@@ -14,11 +9,21 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UseInterceptors
 } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiTags
+} from '@nestjs/swagger';
+import { UserRoles } from '@prisma/client';
 
-import { ErrorEntity } from 'src/shared/entities';
-
+import { Roles } from '../auth/decorators/roles.decorators';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
@@ -27,10 +32,13 @@ import { UsersService } from './users.service';
 @ApiTags('Users')
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
+@ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -39,6 +47,8 @@ export class UsersController {
   }
 
   @Get()
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -47,6 +57,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -63,6 +75,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse()
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
   deleteOneById(@Param('id') id: string) {
