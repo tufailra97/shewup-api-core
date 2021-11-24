@@ -27,22 +27,33 @@ enum Gender {
   @@map("gender")
 }
 
-model Users {
-  id            String      @id @default(uuid())
-  firstName     String      @map("first_name")
-  lastName      String      @map("last_name")
-  email         String      @unique
-  password      String
-  createdAt     DateTime    @default(now()) @map("created_at")
-  updatedAt     DateTime    @updatedAt @map("updated_at")
-  orders        Orders[]
-  gender        Gender
-  userRoles     UserRoles[] @map("user_roles")
-  contactNumber String      @map("contact_number")
+enum Rating {
+  EXCELLENT
+  GOOD
+  AVERAGE
+  POOR
+  BAD
+  NA
 
+  @@map("rating")
+}
+
+model Users {
+  id             String           @id @default(uuid())
+  firstName      String           @map("first_name")
+  lastName       String           @map("last_name")
+  email          String           @unique
+  password       String
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  contactNumber  String?          @map("contact_number")
+  gender         Gender
+  orders         Orders[]
+  userRoles      UserRoles[]      @map("user_roles")
   productReviews ProductReviews[]
+
   @@index([lastName, firstName], map: "users_last_name_first_name_idx")
-  @@index([gender], map: "users_gender")
+  @@index([gender], map: "users_gender_idx")
   @@map("users")
 }
 
@@ -50,80 +61,102 @@ model Orders {
   id           String         @id @default(uuid())
   total        Float
   userId       String         @map("user_id")
-  user         Users          @relation(fields: [userId], references: [id])
   createdAt    DateTime       @default(now()) @map("created_at")
   udpatedAt    DateTime       @updatedAt @map("updated_at")
+  user         Users          @relation(fields: [userId], references: [id])
   orderDetails OrderDetails[]
 
+  @@index([userId], map: "orders_user_id_idx")
   @@map("orders")
 }
 
 model OrderDetails {
   id        String   @id @default(uuid())
   orderId   String   @map("order_id")
-  order     Orders   @relation(fields: [orderId], references: [id])
   productId String   @map("product_id")
-  product   Products @relation(fields: [productId], references: [id])
   price     Float
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  order     Orders   @relation(fields: [orderId], references: [id])
+  product   Products @relation(fields: [productId], references: [id])
 
-  @@index([productId])
+  @@index([productId], map: "order_details_product_id_idx")
   @@map("order_details")
 }
 
 model Categories {
-  id          String     @id @default(uuid())
-  name        String     @unique
-  description String
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
-  products    Products[]
-
+  id           String         @id @default(uuid())
+  name         String         @unique
+  description  String
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  products     Products[]
   categoryTags CategoryTags[]
+
+  @@index([name], map: "categories_name_idx")
   @@map("categories")
 }
 
 model Products {
-  id          String     @id @default(uuid())
-  name        String     @unique
-  description String
-  price       Float
-  categoryId  String     @map("category_id")
-  category    Categories @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
-  sku         String
-
+  id             String     @id @default(uuid())
+  name           String     @unique
+  description    String
+  price          Float
+  categoryId     String     @map("category_id")
+  category       Categories @relation(fields: [categoryId], references: [id])
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  sku            String
+  productDetails Json?      @map("product_details")
 
   orderDetails   OrderDetails[]
   productReviews ProductReviews[]
   productTags    ProductTags[]
+  productImages  ProductImages[]
+
+  @@index([name], map: "products_name_idx")
+  @@index([categoryId], map: "products_category_id_idx")
   @@map("products")
 }
 
-model Tags {
-  id          String        @id @default(uuid())
-  name        String        @unique
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  productTags ProductTags[]
+model ProductImages {
+  id          String   @id @default(uuid())
+  productId   String   @map("product_id")
+  imageUrl    String   @map("image_url")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  product     Products @relation(fields: [productId], references: [id])
 
+  @@index([productId], map: "product_images_product_id_idx")
+  @@map("product_images")
+}
+
+model Tags {
+  id           String         @id @default(uuid())
+  name         String         @unique
+  description  String?
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  productTags  ProductTags[]
   categoryTags CategoryTags[]
-  @@index([name])
+
+  @@index([name], map: "tags_name_idx")
   @@map("tags")
 }
 
 model ProductTags {
   id        String   @id @default(uuid())
   productId String   @map("product_id")
-  product   Products @relation(fields: [productId], references: [id])
   tagId     String   @map("tag_id")
-  tag       Tags     @relation(fields: [tagId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  tag       Tags     @relation(fields: [tagId], references: [id])
+  product   Products @relation(fields: [productId], references: [id])
 
-  @@index([productId, tagId])
+
+  @@index([productId], map: "product_tags_product_id_idx")
+  @@index([tagId], map: "product_tags_tag_id_idx")
   @@map("product_tags")
 }
 
@@ -131,25 +164,30 @@ model CategoryTags {
   id         String     @id @default(uuid())
   categoryId String
   tagId      String     @map("tag_id")
-  tag        Tags       @relation(fields: [tagId], references: [id])
-  category   Categories @relation(fields: [categoryId], references: [id])
   createdAt  DateTime   @default(now()) @map("created_at")
   updatedAt  DateTime   @updatedAt @map("updated_at")
+  tag        Tags       @relation(fields: [tagId], references: [id])
+  category   Categories @relation(fields: [categoryId], references: [id])
 
-  @@index([categoryId])
+  @@index([categoryId], map: "category_tags_category_id_idx")
+  @@index([tagId], map: "category_tags_tag_id_idx")
   @@map("category_tags")
 }
 
 model ProductReviews {
   id        String   @id @default(uuid())
   productId String   @map("product_id")
-  product   Products @relation(fields: [productId], references: [id])
   userId    String   @map("user_id")
-  user      Users    @relation(fields: [userId], references: [id])
   review    String
-  rating    Int
+  rating    Rating
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  product   Products @relation(fields: [productId], references: [id])
+  user      Users    @relation(fields: [userId], references: [id])
 
+
+  @@index([productId], map: "product_reviews_product_id_idx")
+  @@index([userId], map: "product_reviews_user_id_idx")
+  @@index([rating], map: "product_reviews_rating_idx")
   @@map("product_reviews")
 }
