@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppLoggerMiddleware } from './shared/middlewares/app.logger.middlware';
 import { AppConfigService } from './shared/services/app-configs/app.config.service';
+import { OrdersModule } from './api/orders/orders.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { AppConfigService } from './shared/services/app-configs/app.config.servi
       isGlobal: true
     }),
     AuthModule,
-    UsersModule
+    UsersModule,
+    OrdersModule
   ],
   controllers: [AppController],
   providers: [AppService, AppConfigService]

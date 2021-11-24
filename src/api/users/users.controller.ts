@@ -29,10 +29,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
 
+@ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
-@ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
