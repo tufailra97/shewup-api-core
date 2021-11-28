@@ -35,7 +35,7 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto, id);
   }
 
-  @Get('single/:id')
+  @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: OrderEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
@@ -44,7 +44,7 @@ export class OrdersController {
     return this.ordersService.findOneById(id, userId);
   }
 
-  @Get('/all')
+  @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: [OrderEntity] })
   @ApiBadRequestResponse({ type: ErrorEntity })
