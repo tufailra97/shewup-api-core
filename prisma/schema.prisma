@@ -162,7 +162,7 @@ model ProductTags {
 
 model CategoryTags {
   id         String     @id @default(uuid())
-  categoryId String
+  categoryId String     @map("category_id")
   tagId      String     @map("tag_id")
   createdAt  DateTime   @default(now()) @map("created_at")
   updatedAt  DateTime   @updatedAt @map("updated_at")
