@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -26,6 +27,7 @@ import { TagsService } from './tags.service';
 
 @ApiTags('Tags')
 @Controller('tags')
+@ApiBearerAuth()
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 

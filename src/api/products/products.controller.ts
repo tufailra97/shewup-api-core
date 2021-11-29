@@ -9,6 +9,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiTags
@@ -24,6 +25,7 @@ import { ProductsService } from './products.service';
 
 @ApiTags('Products')
 @Controller('products')
+@ApiBearerAuth()
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
