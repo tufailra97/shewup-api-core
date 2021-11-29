@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 
 import { errorMessages } from 'src/shared/constants';
+import { DeleteResourceEntity } from 'src/shared/entities';
 import { BcryptService } from 'src/shared/services/bcrypt/bcrypt.service';
 import { PrismaService } from 'src/shared/services/prisma/prisma.service';
 
@@ -105,7 +106,7 @@ export class UsersService {
         }
       });
 
-      return { message: 'User deleted' };
+      return new DeleteResourceEntity('User has been deleted');
     } catch (error) {
       throw new InternalServerErrorException(
         errorMessages.INTERNAL_SERVER_ERROR

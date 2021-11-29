@@ -30,7 +30,6 @@ export class AuthController {
     }
   })
   login(@Request() req) {
-    console.log('req.user', req.user);
     return this.authService.login(req.user);
   }
 }

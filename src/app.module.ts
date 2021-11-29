@@ -8,6 +8,8 @@ import { AppService } from './app.service';
 import { AppLoggerMiddleware } from './shared/middlewares/app.logger.middlware';
 import { AppConfigService } from './shared/services/app-configs/app.config.service';
 import { OrdersModule } from './api/orders/orders.module';
+import { ProductsModule } from './api/products/products.module';
+import { TagsModule } from './api/tags/tags.module';
 
 @Module({
   imports: [
@@ -16,7 +18,9 @@ import { OrdersModule } from './api/orders/orders.module';
     }),
     AuthModule,
     UsersModule,
-    OrdersModule
+    OrdersModule,
+    ProductsModule,
+    TagsModule
   ],
   controllers: [AppController],
   providers: [AppService, AppConfigService]

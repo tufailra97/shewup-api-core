@@ -118,7 +118,12 @@ export class OrdersService {
       include: {
         orderDetails: {
           include: {
-            product: true
+            product: {
+              include: {
+                category: true,
+                productImages: true
+              }
+            }
           }
         }
       }
