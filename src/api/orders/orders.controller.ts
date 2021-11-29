@@ -11,6 +11,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiOkResponse,
+  ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
 import { ErrorEntity } from 'src/shared/entities';
@@ -27,6 +28,9 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Create a new order'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: OrderEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
@@ -36,6 +40,9 @@ export class OrdersController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Find order by id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: OrderEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
@@ -45,6 +52,9 @@ export class OrdersController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Find all orders by user id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: [OrderEntity] })
   @ApiBadRequestResponse({ type: ErrorEntity })

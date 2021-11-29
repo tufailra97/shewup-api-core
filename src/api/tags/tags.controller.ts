@@ -14,6 +14,7 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
 
@@ -32,6 +33,9 @@ export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Create a new tag'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: TagEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
@@ -40,6 +44,9 @@ export class TagsController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Get all tags'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: [TagEntity] })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -49,6 +56,9 @@ export class TagsController {
   }
 
   @Get('product/:id')
+  @ApiOperation({
+    summary: 'Get all tags by ptoduct id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: [TagEntity] })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -58,6 +68,9 @@ export class TagsController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get tag by id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: TagEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -67,6 +80,9 @@ export class TagsController {
   }
 
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Update tag by id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: TagEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -76,6 +92,9 @@ export class TagsController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete tag by id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: DeleteResourceEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })

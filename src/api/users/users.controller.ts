@@ -17,6 +17,7 @@ import {
   ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
 import { UserRoles } from '@prisma/client';
@@ -37,6 +38,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Create a new user'
+  })
   @Roles(UserRoles.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
@@ -47,6 +51,9 @@ export class UsersController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Find all users'
+  })
   @Roles(UserRoles.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
@@ -57,6 +64,9 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Find a user by id'
+  })
   @Roles(UserRoles.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: UserEntity })
@@ -67,6 +77,9 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Update user by id'
+  })
   @ApiOkResponse({ type: UserEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -75,6 +88,9 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete user by id'
+  })
   @Roles(UserRoles.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: DeleteResourceEntity })

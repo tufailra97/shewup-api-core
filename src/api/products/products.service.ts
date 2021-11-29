@@ -138,6 +138,24 @@ export class ProductsService {
     return product;
   }
 
+  async findProductsByCategoryId(id: string) {
+    const products = await this.prismaService.products.findMany({
+      where: {
+        categoryId: id
+      },
+      include: {
+        productTags: {
+          include: {
+            tag: true
+          }
+        },
+        productImages: true,
+        category: true
+      }
+    });
+    return products;
+  }
+
   async update(id: string, updateProductDto: UpdateProductDto) {
     try {
       const updatedProduct = await this.prismaService.products.update({
