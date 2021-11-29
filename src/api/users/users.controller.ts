@@ -1,4 +1,4 @@
-import { ErrorEntity } from 'src/shared/entities';
+import { DeleteResourceEntity, ErrorEntity } from 'src/shared/entities';
 
 import {
   Body,
@@ -77,7 +77,7 @@ export class UsersController {
   @Delete(':id')
   @Roles(UserRoles.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOkResponse()
+  @ApiOkResponse({ type: DeleteResourceEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
   deleteOneById(@Param('id') id: string) {
     return this.usersService.deleteOneById(id);

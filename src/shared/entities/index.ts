@@ -1,2 +1,2 @@
 export { ErrorEntity } from './error.entity';
-export { ResourceDeletedEntity } from './resource-deleted.entity';
+export { DeleteResourceEntity } from './delete-resource.entity';

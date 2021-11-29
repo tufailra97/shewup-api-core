@@ -8,6 +8,7 @@ import {
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 import { errorMessages, prismaKnownErrors } from 'src/shared/constants';
+import { DeleteResourceEntity } from 'src/shared/entities';
 import { PrismaService } from 'src/shared/services/prisma/prisma.service';
 
 import { CreateTagDto } from './dto/create-tag.dto';
@@ -123,10 +124,7 @@ export class TagsService {
 
     try {
       await this.prismaService.tags.delete({ where: { id } });
-      return {
-        statusCode: 200,
-        message: 'Tag deleted'
-      };
+      return new DeleteResourceEntity('Tag has been deleted');
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === prismaKnownErrors.RECORD_NOT_FOUND.code) {

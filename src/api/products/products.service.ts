@@ -13,6 +13,7 @@ import { PrismaService } from 'src/shared/services/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { TagsService } from '../tags/tags.service';
+import { DeleteResourceEntity } from 'src/shared/entities';
 
 // TODO: map product tags correctly
 @Injectable()
@@ -229,10 +230,7 @@ export class ProductsService {
         }
       });
 
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Product has been deleted'
-      };
+      return new DeleteResourceEntity('Product has been deleted');
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === prismaKnownErrors.FOREIGN_CONSTRAINT_FAILED.code) {

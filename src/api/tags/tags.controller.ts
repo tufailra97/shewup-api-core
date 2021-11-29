@@ -5,7 +5,8 @@ import {
   Get,
   Param,
   Patch,
-  Post
+  Post,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -15,7 +16,8 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 
-import { ErrorEntity, ResourceDeletedEntity } from 'src/shared/entities';
+import { ErrorEntity, DeleteResourceEntity } from 'src/shared/entities';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
@@ -28,6 +30,7 @@ export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: TagEntity })
   @ApiBadRequestResponse({ type: ErrorEntity })
   createMany(@Body() createTagDto: CreateTagDto) {
@@ -35,6 +38,7 @@ export class TagsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: [TagEntity] })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
   @ApiNotFoundResponse({ type: ErrorEntity })
@@ -43,6 +47,7 @@ export class TagsController {
   }
 
   @Get('product/:id')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: [TagEntity] })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
   @ApiNotFoundResponse({ type: ErrorEntity })
@@ -51,6 +56,7 @@ export class TagsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: TagEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
   @ApiNotFoundResponse({ type: ErrorEntity })
@@ -59,6 +65,7 @@ export class TagsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: TagEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
   @ApiNotFoundResponse({ type: ErrorEntity })
@@ -67,7 +74,8 @@ export class TagsController {
   }
 
   @Delete(':id')
-  @ApiOkResponse({ type: ResourceDeletedEntity })
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: DeleteResourceEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
   @ApiNotFoundResponse({ type: ErrorEntity })
   deleteOneById(@Param('id') id: string) {
