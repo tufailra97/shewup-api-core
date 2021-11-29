@@ -11,6 +11,7 @@ import {
 import {
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
 
@@ -28,6 +29,9 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Create a new product'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -36,6 +40,9 @@ export class ProductsController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Get all products'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: [ProductEntity] })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -44,6 +51,9 @@ export class ProductsController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get product by id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -51,7 +61,21 @@ export class ProductsController {
     return this.productsService.findOneById(id);
   }
 
+  @Get('/category/:id')
+  @ApiOperation({
+    summary: 'Get all products by category id'
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: [ProductEntity] })
+  @ApiInternalServerErrorResponse({ type: ErrorEntity })
+  findProductsByCategoryId(@Param('id') id: string) {
+    return this.productsService.findProductsByCategoryId(id);
+  }
+
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Update product by id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ProductEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
@@ -60,6 +84,9 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete product by id'
+  })
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: DeleteResourceEntity })
   @ApiInternalServerErrorResponse({ type: ErrorEntity })
