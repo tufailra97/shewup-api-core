@@ -10,6 +10,7 @@ import { AppConfigService } from './shared/services/app-configs/app.config.servi
 import { OrdersModule } from './api/orders/orders.module';
 import { ProductsModule } from './api/products/products.module';
 import { TagsModule } from './api/tags/tags.module';
+import { CategoriesModule } from './api/categories/categories.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { TagsModule } from './api/tags/tags.module';
     UsersModule,
     OrdersModule,
     ProductsModule,
-    TagsModule
+    TagsModule,
+    CategoriesModule
   ],
   controllers: [AppController],
   providers: [AppService, AppConfigService]
