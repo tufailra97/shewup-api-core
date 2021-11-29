@@ -11,11 +11,23 @@ import { OrdersModule } from './api/orders/orders.module';
 import { ProductsModule } from './api/products/products.module';
 import { TagsModule } from './api/tags/tags.module';
 import { CategoriesModule } from './api/categories/categories.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { AppConfigModule } from './shared/services/app-configs/app.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
+    }),
+    ThrottlerModule.forRootAsync({
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
+      useFactory: (appConfigService: AppConfigService) => {
+        return {
+          ttl: appConfigService.configs.APP_THROTTLE_TTL,
+          limit: appConfigService.configs.APP_THROTTLE_LIMIT
+        };
+      }
     }),
     AuthModule,
     UsersModule,

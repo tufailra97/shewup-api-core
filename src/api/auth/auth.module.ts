@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { AppConfigModule } from 'src/shared/services/app-configs/app.module';
 
+import { AppConfigService } from 'src/shared/services/app-configs/app.config.service';
+import { AppConfigModule } from 'src/shared/services/app-configs/app.module';
 import { BcryptModule } from 'src/shared/services/bcrypt/bcrypt.module';
 import { PrismaModule } from 'src/shared/services/prisma/prisma.module';
 
@@ -21,14 +21,14 @@ import { LocalStrategy } from './strategies/local.strategy';
     AppConfigModule,
     PrismaModule,
     JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET_KEY'),
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
+      useFactory: async (appConfigService: AppConfigService) => ({
+        secret: appConfigService.configs.JWT_SECRET_KEY,
         signOptions: {
-          expiresIn: '10h'
+          expiresIn: appConfigService.configs.JWT_TOKEN_TTL
         }
-      }),
-      inject: [ConfigService]
+      })
     })
   ],
   controllers: [AuthController],

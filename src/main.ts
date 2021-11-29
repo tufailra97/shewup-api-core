@@ -16,7 +16,11 @@ async function bootstrap() {
 
   app.use(helmet());
   app.useGlobalInterceptors(app.get(Reflector));
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true
+    })
+  );
   app.enableVersioning({
     defaultVersion: '1',
     type: VersioningType.URI
@@ -30,6 +34,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {
+    customSiteTitle: 'Sewup APIs',
     swaggerOptions: { tagsSorter: 'alpha', operationsSorter: 'alpha' }
   });
 
