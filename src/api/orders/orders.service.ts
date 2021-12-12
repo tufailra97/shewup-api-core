@@ -70,7 +70,6 @@ export class OrdersService {
     try {
       const order = await this.prismaService.orders.create({
         data: {
-          userId: user.id,
           total: validateProducts.total,
           orderDetails: {
             createMany: {
@@ -88,8 +87,7 @@ export class OrdersService {
               orderId: false,
               product: true
             }
-          },
-          user: true
+          }
         }
       });
 
@@ -112,9 +110,7 @@ export class OrdersService {
 
   async findAllByUserId(userId: string) {
     const orders = await this.prismaService.orders.findMany({
-      where: {
-        userId
-      },
+      where: {},
       include: {
         orderDetails: {
           include: {
@@ -151,8 +147,7 @@ export class OrdersService {
       where: {
         AND: [
           {
-            id,
-            userId
+            id
           }
         ]
       },
@@ -161,8 +156,7 @@ export class OrdersService {
           include: {
             product: true
           }
-        },
-        user: true
+        }
       }
     });
 

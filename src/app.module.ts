@@ -7,10 +7,10 @@ import { OrdersModule } from './api/orders/orders.module';
 import { ProductsModule } from './api/products/products.module';
 import { TagsModule } from './api/tags/tags.module';
 import { UsersModule } from './api/users/users.module';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppLoggerMiddleware } from './shared/middlewares/app.logger.middlware';
 import { AppConfigService } from './shared/services/app-configs/app.config.service';
+import { BusinessModule } from './api/business/business.module';
 
 @Module({
   imports: [
@@ -22,9 +22,9 @@ import { AppConfigService } from './shared/services/app-configs/app.config.servi
     OrdersModule,
     ProductsModule,
     TagsModule,
-    CategoriesModule
+    CategoriesModule,
+    BusinessModule
   ],
-  controllers: [AppController],
   providers: [AppService, AppConfigService]
 })
 export class AppModule implements NestModule {

@@ -10,13 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRoles {
-  ADMIN
+enum StoreUserRoles {
   MANAGER
   STAFF
-  SUPER_ADMIN
+}
 
-  @@map("user_roles")
+enum BusinessUsersRole {
+  ADMIN
+  REPORTER
+  SUPER_ADMIN
 }
 
 enum Gender {
@@ -38,47 +40,62 @@ enum Rating {
   @@map("rating")
 }
 
-model Users {
-  id             String           @id @default(uuid())
-  firstName      String           @map("first_name")
-  lastName       String           @map("last_name")
-  email          String           @unique
-  password       String
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @updatedAt @map("updated_at")
-  contactNumber  String?          @map("contact_number")
-  gender         Gender
-  orders         Orders[]
-  userRoles      UserRoles[]      @map("user_roles")
-  productReviews ProductReviews[]
+model Customers {
+  id              String            @id @default(uuid())
+  firstName       String            @map("first_name")
+  lastName        String            @map("last_name")
+  email           String            @map("email")
+  password        String
+  gender          Gender
+  dob             String
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt
+  contactNumber   String            @map("contact_number")
+  customerAddress CustomerAddress[]
 
-  @@index([lastName, firstName], map: "users_last_name_first_name_idx")
-  @@index([gender], map: "users_gender_idx")
-  @@map("users")
+  Orders Orders[]
+  @@map("customers")
+}
+
+model CustomerAddress {
+  id           String    @id @default(uuid())
+  addressLine1 String    @map("address_line_1")
+  addressLine2 String    @map("address_line_2")
+  city         String
+  postCode     String    @map("post_code")
+  country      String    @default("United Kingdom")
+  customerId   String    @map("customer_id")
+  isDefault    Boolean   @map("is_default")
+  customer     Customers @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt
+
+  @@map("customer_address")
 }
 
 model Orders {
   id           String         @id @default(uuid())
   total        Float
-  userId       String         @map("user_id")
   createdAt    DateTime       @default(now()) @map("created_at")
   udpatedAt    DateTime       @updatedAt @map("updated_at")
-  user         Users          @relation(fields: [userId], references: [id])
+  customerId   String         @map("customer_id")
+  customer     Customers      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  storeId      String         @map("store_id")
+  stores       Stores         @relation(fields: [storeId], references: [id], onDelete: SetNull)
   orderDetails OrderDetails[]
 
-  @@index([userId], map: "orders_user_id_idx")
   @@map("orders")
 }
 
 model OrderDetails {
   id        String   @id @default(uuid())
-  orderId   String   @map("order_id")
-  productId String   @map("product_id")
   price     Float
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  order     Orders   @relation(fields: [orderId], references: [id])
-  product   Products @relation(fields: [productId], references: [id])
+  orderId   String   @map("order_id")
+  order     Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String   @map("product_id")
+  product   Products @relation(fields: [productId], references: [id], onDelete: SetNull)
 
   @@index([productId], map: "order_details_product_id_idx")
   @@map("order_details")
@@ -98,35 +115,82 @@ model Categories {
 }
 
 model Products {
-  id             String     @id @default(uuid())
-  name           String     @unique
-  description    String
-  price          Float
-  categoryId     String     @map("category_id")
-  category       Categories @relation(fields: [categoryId], references: [id])
-  createdAt      DateTime   @default(now()) @map("created_at")
-  updatedAt      DateTime   @updatedAt @map("updated_at")
-  sku            String
-  productDetails Json?      @map("product_details")
-
-  orderDetails   OrderDetails[]
-  productReviews ProductReviews[]
-  productTags    ProductTags[]
-  productImages  ProductImages[]
+  id                 String               @id @default(uuid())
+  name               String
+  description        String
+  price              Float
+  sku                String
+  isASideProduct     Boolean              @map("is_a_side_product")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  productDetails     Json?                @map("product_details")
+  categoryId         String               @map("category_id")
+  category           Categories           @relation(fields: [categoryId], references: [id])
+  businessId         String               @map("business_id")
+  business           Business             @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  menuSectionId      String               @map("menu_section_id")
+  menuSection        MenuSections         @relation(fields: [menuSectionId], references: [id], onDelete: SetNull)
+  orderDetails       OrderDetails[]
+  productReviews     ProductReviews[]
+  productTags        ProductTags[]
+  productImages      ProductImages[]
+  productIngredients ProductIngredients[]
 
   @@index([name], map: "products_name_idx")
+  @@index([price], map: "products_price_idx")
   @@index([categoryId], map: "products_category_id_idx")
+  @@index([isASideProduct], map: "products_is_a_side_product_idx")
   @@map("products")
 }
 
-model ProductImages {
+model Menus {
+  id          String         @id @default(uuid())
+  name        String         @unique
+  description String
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  businessId  String         @map("business_id")
+  business    Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  menuItems   MenuSections[]
+
+  @@map("menus")
+}
+
+model MenuSections {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  menuId      String     @map("menu_id")
+  menu        Menus      @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  products    Products[]
+
+  @@map("menu_items")
+}
+
+model ProductIngredients {
   id          String   @id @default(uuid())
-  productId   String   @map("product_id")
-  imageUrl    String   @map("image_url")
+  name        String
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-  product     Products @relation(fields: [productId], references: [id])
+  productId   String   @map("product_id")
+  products    Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_ingredients")
+}
+
+model ProductImages {
+  id          String    @id @default(uuid())
+  name        String?   @default("")
+  productId   String    @map("product_id")
+  imageUrl    String    @map("image_url")
+  description String?   @default("")
+  index       Int?      @default(0) @map("index")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  product     Products? @relation(fields: [productId], references: [id])
 
   @@index([productId], map: "product_images_product_id_idx")
   @@map("product_images")
@@ -175,19 +239,86 @@ model CategoryTags {
 }
 
 model ProductReviews {
+  //TODO: add customer id from customer table
   id        String   @id @default(uuid())
   productId String   @map("product_id")
-  userId    String   @map("user_id")
   review    String
   rating    Rating
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   product   Products @relation(fields: [productId], references: [id])
-  user      Users    @relation(fields: [userId], references: [id])
-
 
   @@index([productId], map: "product_reviews_product_id_idx")
-  @@index([userId], map: "product_reviews_user_id_idx")
   @@index([rating], map: "product_reviews_rating_idx")
   @@map("product_reviews")
+}
+
+model Users {
+  id                   String          @id @default(uuid())
+  firstName            String          @map("first_name")
+  lastName             String          @map("last_name")
+  email                String          @unique
+  password             String
+  gender               Gender
+  businessUsers        StoreUsers[]
+  businessAccountUsers BusinessUsers[]
+
+  @@map("users")
+}
+
+model StoreUsers {
+  id                 String         @id @default(uuid())
+  userId             String         @map("user_id")
+  user               Users          @relation(fields: [userId], references: [id])
+  storeId            String         @map("store_id")
+  store              Stores         @relation(fields: [storeId], references: [id])
+  role               StoreUserRoles
+  storeUniquePassKey String         @map("store_unique_pass_key") // user can use this key to login in to the store
+  isActive           Boolean        @map("is_active")
+  isValidated        Boolean        @map("is_validated")
+
+  @@map("store_users")
+}
+
+model Business {
+  id            String          @id @default(uuid())
+  name          String
+  addressLine1  String          @map("address_line_1")
+  addressLine2  String?         @map("address_line_2")
+  city          String
+  postCode      String          @map("post_code")
+  country       String          @default("United Kingdom")
+  stores        Stores[]
+  businessUsers BusinessUsers[]
+  products      Products[]
+  menus         Menus[]
+
+  @@map("business")
+}
+
+model BusinessUsers {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  isOwner    Boolean  @map("is_owner")
+  user       Users    @relation(fields: [userId], references: [id])
+  busienssId String   @map("business_id")
+  business   Business @relation(fields: [busienssId], references: [id])
+
+  @@map("business_users")
+}
+
+model Stores {
+  id            String       @id @default(uuid())
+  name          String
+  addressLine1  String       @map("address_line_1")
+  addressLine2  String?      @map("address_line_2")
+  city          String
+  postCode      String       @map("post_code")
+  companyNumber String?      @map("company_number")
+  businessId    String       @map("business_id") // parent business id
+  business      Business     @relation(fields: [businessId], references: [id])
+  storeUsers    StoreUsers[]
+  orders        Orders[]
+
+  @@map("stores")
 }

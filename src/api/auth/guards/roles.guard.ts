@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRoles } from '@prisma/client';
+import { StoreUserRoles } from '@prisma/client';
 
 import { UserEntity } from 'src/api/users/entities/user.entity';
 
@@ -11,7 +11,7 @@ export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<UserRoles[]>(
+    const requiredRoles = this.reflector.getAllAndOverride<StoreUserRoles[]>(
       ROLES_KEY,
       [context.getHandler(), context.getClass()]
     );
@@ -26,6 +26,6 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
-    return requiredRoles.some((role) => user.userRoles.includes(role));
+    return requiredRoles.some((role) => user.StoreUserRoles.includes(role));
   }
 }

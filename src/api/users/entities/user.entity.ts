@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
 
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender, UserRoles, Users } from '@prisma/client';
+import { Gender, StoreUserRoles, Users } from '@prisma/client';
 
 export class UserEntity implements Users {
   @ApiProperty()
@@ -25,8 +25,8 @@ export class UserEntity implements Users {
   @ApiProperty()
   updatedAt: Date;
 
-  @ApiProperty({ enum: UserRoles, isArray: true })
-  userRoles: UserRoles[];
+  @ApiProperty({ enum: StoreUserRoles, isArray: true })
+  StoreUserRoles: StoreUserRoles[];
 
   @ApiProperty({ enum: Gender })
   gender: Gender;

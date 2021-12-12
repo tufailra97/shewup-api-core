@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma, ProductImages, Products } from '@prisma/client';
+import { IsString } from 'class-validator';
 
 import { TagDto } from 'src/api/tags/dto/tag.dto';
 
@@ -38,4 +39,8 @@ export class ProductEntity implements Products {
 
   @ApiProperty({ type: [TagDto] })
   productTags: TagDto[];
+
+  @ApiProperty()
+  @IsString()
+  isASideProduct: boolean;
 }

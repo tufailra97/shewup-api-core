@@ -63,35 +63,34 @@ export class ProductsService {
     }
 
     try {
-      const product = await this.prismaService.products.create({
-        data: {
-          description: createProductDto.description,
-          name: createProductDto.name,
-          price: createProductDto.price,
-          categoryId: createProductDto.categoryId,
-          sku: createProductDto.sku,
-          productTags: {
-            createMany: {
-              data: uniqueTags.map((tag) => ({
-                tagId: tag
-              }))
-            }
-          },
-          productImages: {
-            createMany: {
-              data: createProductDto.productImages,
-              skipDuplicates: true
-            }
-          }
-        },
-        include: {
-          productTags: true,
-          productImages: true,
-          category: true
-        }
-      });
-
-      return product;
+      // const product = await this.prismaService.products.create({
+      //   data: {
+      //     description: createProductDto.description,
+      //     name: createProductDto.name,
+      //     price: createProductDto.price,
+      //     categoryId: createProductDto.categoryId,
+      //     sku: createProductDto.sku,
+      //     productTags: {
+      //       createMany: {
+      //         data: uniqueTags.map((tag) => ({
+      //           tagId: tag
+      //         }))
+      //       }
+      //     },
+      //     productImages: {
+      //       createMany: {
+      //         data: createProductDto.productImages,
+      //         skipDuplicates: true
+      //       }
+      //     }
+      //   },
+      //   include: {
+      //     productTags: true,
+      //     productImages: true,
+      //     category: true
+      //   }
+      // });
+      // return product;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === prismaKnownErrors.UNIQUE_CONSTRAINT_FAILED.code) {

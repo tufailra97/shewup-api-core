@@ -9,9 +9,11 @@ import {
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender, UserRoles, Users } from '@prisma/client';
+import { Gender, StoreUserRoles, Users } from '@prisma/client';
 
 export class CreateUserDto implements Users {
+  businessId: string;
+  businessBranchId: string;
   @Exclude()
   id: string;
 
@@ -37,9 +39,9 @@ export class CreateUserDto implements Users {
   @Exclude()
   updatedAt: Date;
 
-  @ApiProperty({ enum: UserRoles, isArray: true })
-  @IsEnum(UserRoles, { each: true })
-  userRoles: UserRoles[];
+  @ApiProperty({ enum: StoreUserRoles, isArray: true })
+  @IsEnum(StoreUserRoles, { each: true })
+  StoreUserRoles: StoreUserRoles[];
 
   @ApiProperty({ enum: Gender })
   @IsEnum(Gender)

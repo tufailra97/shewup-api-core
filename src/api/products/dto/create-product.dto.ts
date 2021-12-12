@@ -65,4 +65,8 @@ export class CreateProductDto implements Products {
 
   @ApiProperty()
   productTags: string[];
+
+  @ApiProperty()
+  @IsString()
+  isASideProduct: boolean;
 }
