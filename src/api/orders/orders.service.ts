@@ -68,39 +68,37 @@ export class OrdersService {
     );
 
     try {
-      const order = await this.prismaService.orders.create({
-        data: {
-          total: validateProducts.total,
-          orderDetails: {
-            createMany: {
-              data: products.map(({ id, price }) => ({
-                productId: id,
-                price
-              }))
-            }
-          }
-        },
-        include: {
-          orderDetails: {
-            select: {
-              id: false,
-              orderId: false,
-              product: true
-            }
-          }
-        }
-      });
-
-      const mappedOrder = {
-        ...order,
-        orderDetails: {
-          products: order.orderDetails.map(({ product }) => product)
-        }
-      };
-
-      return {
-        order: mappedOrder
-      };
+      // const order = await this.prismaService.orders.create({
+      //   data: {
+      //     total: validateProducts.total,
+      //     orderDetails: {
+      //       // createMany: {
+      //       //   data: products.map(({ id, price }) => ({
+      //       //     productId: id,
+      //       //     price
+      //       //   }))
+      //       // }
+      //     }
+      //   },
+      //   include: {
+      //     orderDetails: {
+      //       select: {
+      //         id: false,
+      //         orderId: false,
+      //         product: true
+      //       }
+      //     }
+      //   }
+      // });
+      // const mappedOrder = {
+      //   ...order,
+      //   orderDetails: {
+      //     products: order.orderDetails.map(({ product }) => product)
+      //   }
+      // };
+      // return {
+      //   order: mappedOrder
+      // };
     } catch (error) {
       return {
         error

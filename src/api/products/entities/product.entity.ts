@@ -43,4 +43,7 @@ export class ProductEntity implements Products {
   @ApiProperty()
   @IsString()
   isASideProduct: boolean;
+
+  businessId: string;
+  menuSectionId: string;
 }

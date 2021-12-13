@@ -20,7 +20,7 @@ export class BusinessService {
 
   async create(createBusinessDto: CreateBusinessDto) {
     // TODO: get user id from token
-    const business = await this.prismaService.business.findFirst({
+    const business = await this.prismaService.businesses.findFirst({
       where: {
         name: createBusinessDto.name,
         postCode: createBusinessDto.postCode
@@ -32,14 +32,13 @@ export class BusinessService {
     }
 
     try {
-      const business = await this.prismaService.business.create({
+      const business = await this.prismaService.businesses.create({
         data: {
           ...createBusinessDto,
           businessUsers: {
-            create: {
-              isOwner: true,
-              userId: '7fa1b348-2a02-4491-b080-64c3b7a633d3'
-            }
+            // create: {
+            //   userId: '7fa1b348-2a02-4491-b080-64c3b7a633d3'
+            // }
           }
         }
       });
@@ -57,7 +56,7 @@ export class BusinessService {
   }
 
   async findOneById(id: string) {
-    const business = await this.prismaService.business.findFirst({
+    const business = await this.prismaService.businesses.findFirst({
       where: {
         id
       }
@@ -71,13 +70,13 @@ export class BusinessService {
   }
 
   async findAll() {
-    const businesses = await this.prismaService.business.findMany();
+    const businesses = await this.prismaService.businesses.findMany();
 
     return businesses;
   }
 
   async updateOneById(id: string, updateBusinessDto: UpdateBusinessDto) {
-    const business = await this.prismaService.business.findFirst({
+    const business = await this.prismaService.businesses.findFirst({
       where: {
         id
       }
@@ -88,7 +87,7 @@ export class BusinessService {
     }
 
     // check if other business exist with same name in the same postcode
-    const otherBusiness = await this.prismaService.business.findMany({
+    const otherBusiness = await this.prismaService.businesses.findMany({
       where: {
         NOT: {
           id
@@ -110,7 +109,7 @@ export class BusinessService {
     }
 
     try {
-      await this.prismaService.business.update({
+      await this.prismaService.businesses.update({
         where: { id },
         data: updateBusinessDto
       });
@@ -132,7 +131,7 @@ export class BusinessService {
     // - all orders related to the business should be anonymised
     // -
 
-    const business = await this.prismaService.business.findFirst({
+    const business = await this.prismaService.businesses.findFirst({
       where: { id }
     });
 
@@ -146,12 +145,12 @@ export class BusinessService {
           busienssId: id
         }
       });
-      await this.prismaService.store.deleteMany({
+      await this.prismaService.stores.deleteMany({
         where: {
           businessId: id
         }
       });
-      await this.prismaService.business.delete({ where: { id } });
+      await this.prismaService.businesses.delete({ where: { id } });
       return new DeleteResourceEntity('Business has been deleted');
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {

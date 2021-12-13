@@ -23,4 +23,7 @@ export class OrderEntity implements Orders {
   @ApiProperty({ type: [ProductDto] })
   @Type(() => ProductDto)
   products: Array<ProductDto>;
+
+  customerId: string;
+  storeId: string;
 }

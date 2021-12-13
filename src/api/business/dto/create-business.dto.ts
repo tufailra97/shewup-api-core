@@ -2,9 +2,9 @@ import { Exclude } from 'class-transformer';
 import { IsString, MaxLength, MinLength } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
-import { Business } from '@prisma/client';
+import { Businesses } from '@prisma/client';
 
-export class CreateBusinessDto implements Business {
+export class CreateBusinessDto implements Businesses {
   @Exclude()
   id: string;
 

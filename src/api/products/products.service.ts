@@ -166,7 +166,6 @@ export class ProductsService {
           name: updateProductDto.name,
           price: updateProductDto.price,
           categoryId: updateProductDto.categoryId,
-          sku: updateProductDto.sku,
           // TODO: better handle product images
           ...(Array.isArray(updateProductDto.productImages) && {
             productImages: {
